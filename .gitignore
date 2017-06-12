@@ -7,3 +7,5 @@ bin/
 .classpath
 sort.exe
 sqlite3.exe
+reuters.db
+word_doc_list.txt

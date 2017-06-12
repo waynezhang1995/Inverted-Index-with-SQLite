@@ -1,0 +1,9 @@
+html/
+bin/
+.settings/
+.DS_Store
+.DS_Store?
+.project
+.classpath
+sort.exe
+sqlite3.exe

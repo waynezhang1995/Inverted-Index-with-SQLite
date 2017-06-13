@@ -52,6 +52,7 @@ public class Index {
 			in_html.readLine(); // Skip first two lines
 			in_html.readLine();
 			while ((read_line = in_html.readLine()) != null) {
+				read_line = read_line.replaceAll("[-\"$'()&]", "");
 				for (String word : read_line.split("\\s+")) {
 					if (!stopWords.contains(word) && word.length() != 0) { // No a stop word
 						out_html.write(word + "-" + filename);
@@ -59,7 +60,10 @@ public class Index {
 					}
 				}
 			}
+			in_html.close();
         }
+		in_stopwords.close();
+		out_html.close();
 	}
 
 	//It fills the postings table.
@@ -182,13 +186,13 @@ public class Index {
 									//then docid (numerically)
 		);
 		//Mac and Linux users please remove ".exe" from sort
-		Runtime.getRuntime().exec("sort.exe -k1,1 -k2n,2 word_doc_list.txt -o sorted_word_doc_list.txt").waitFor();
+		Runtime.getRuntime().exec("sort -k1,1 -k2n,2 word_doc_list.txt -o sorted_word_doc_list.txt").waitFor();
 		fillWordTable("sorted_word_doc_list.txt");
 
 		//This will output (docid, word, freq, df) tuples to a text file, doc_word_freq_df.txt, by reading the index table we just built
 		fillDocWordFreqDfList("doc_word_freq_df.txt");
 		//Then, we sort this file with respect to docid (numerically), then word (alphabetically)
-		Runtime.getRuntime().exec("sort.exe -k1n,1 -k2,2 doc_word_freq_df.txt -o sorted_doc_word_freq_df.txt")
+		Runtime.getRuntime().exec("sort -k1n,1 -k2,2 doc_word_freq_df.txt -o sorted_doc_word_freq_df.txt")
 				.waitFor();
 		//Finally, we fill in the document magnitude table
 		fillDocMagTable("sorted_doc_word_freq_df.txt", 19025);

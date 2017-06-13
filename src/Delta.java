@@ -11,7 +11,7 @@ public class Delta {
     	}
     	return delta_freq_list;
     }
-    
+
     public static SortedMap<Integer, Integer> deltalist2sortedmap (List<Integer> delta_freq_list) {
     	SortedMap<Integer, Integer> docid_freq_map = new TreeMap<Integer, Integer> ();
     	Integer current_docid = 0;
@@ -19,16 +19,17 @@ public class Delta {
     		Integer docid = delta_freq_list.get(i) + current_docid;
     		Integer freq = delta_freq_list.get(i+1);
     		docid_freq_map.put(docid, freq);
-    		current_docid = docid; 
+    		current_docid = docid;
     	}
     	return docid_freq_map;
-    }  
-        
+    }
+
     public static void main(String[] args) throws Exception {
     	//Testing
         SortedMap<Integer, Integer> docid_freq_map = new TreeMap<Integer, Integer> ();
-        docid_freq_map.put(345, 7); docid_freq_map.put(346, 8); docid_freq_map.put(375, 1); docid_freq_map.put(445, 9);
+        docid_freq_map.put(345, 7); docid_freq_map.put(346, 8); docid_freq_map.put(375, 1); docid_freq_map.put(445, 9);docid_freq_map.put(445, 10);
+		System.out.println(docid_freq_map.size());
         System.out.println( Delta.sortedmap2deltalist(docid_freq_map) );
-        System.out.println( Delta.deltalist2sortedmap( Delta.sortedmap2deltalist(docid_freq_map) ) );      
+        System.out.println( Delta.deltalist2sortedmap( Delta.sortedmap2deltalist(docid_freq_map) ) );
     }
 }

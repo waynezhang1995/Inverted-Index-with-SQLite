@@ -10,6 +10,10 @@ public class Index {
 	static PreparedStatement stmt_select_df_from_postings;
 	static PreparedStatement stmt_select_docinfo_from_docmag;
 	static SortedMap<String, SortedMap<Integer, Integer>> dictionary;
+
+	/**
+	 * In the console, run - sqlite3 reuters.db < table_creation.sql to create posting table
+	 */
 	static {
 		try {
 			conn = ConnectionManager.getConnection();
@@ -117,7 +121,7 @@ public class Index {
 		ResultSet rset = stmt_select_all_from_postings.executeQuery();
 		while (rset.next()) {
 			String word = rset.getString(1);
-			System.out.println(word);
+			// System.out.println(word);
 			Integer df = rset.getInt(2);
 			byte[] bytestream = rset.getBytes(3);
 			Map<Integer, Integer> docid_freq_map = Delta.deltalist2sortedmap(VB.VBDECODE(bytestream));

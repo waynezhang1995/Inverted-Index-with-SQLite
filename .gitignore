@@ -5,7 +5,3 @@ bin/
 .DS_Store?
 .project
 .classpath
-sort.exe
-sqlite3.exe
-reuters.db
-word_doc_list.txt

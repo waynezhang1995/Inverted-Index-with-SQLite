@@ -10,10 +10,6 @@ public class Index {
 	static PreparedStatement stmt_select_df_from_postings;
 	static PreparedStatement stmt_select_docinfo_from_docmag;
 	static SortedMap<String, SortedMap<Integer, Integer>> dictionary;
-
-	/**
-	 * In the console, run - sqlite3 reuters.db < table_creation.sql to create posting table
-	 */
 	static {
 		try {
 			conn = ConnectionManager.getConnection();
@@ -90,17 +86,12 @@ public class Index {
 
 	//It fills the postings table.
 	public static void fillWordTable(String sortedWordDocListFilename) throws Exception {
-		/**
-		 * Testing:
-		 *
-		 * SortedMap<Integer, Integer> test = dictionary.get("A");
-		 * System.out.println(test.size());
-		 * System.out.println( Delta.sortedmap2deltalist(test) );
-		 */
+
+		// TODO: using sorted_word_doc_list.txt in this function
 
 		for (Map.Entry<String, SortedMap<Integer, Integer>> entry : dictionary.entrySet()) {
 			String term = entry.getKey(); // Word
-			SortedMap<Integer, Integer> posting_list = entry.getValue(); // Posting list associated with the term
+			SortedMap<Integer, Integer> posting_list = entry.getValue(); // Posing list associated with the term
 
 			stmt_insert_into_postings.setString(1, term);
 			stmt_insert_into_postings.setInt(2, posting_list.size());
@@ -108,11 +99,11 @@ public class Index {
 			stmt_insert_into_postings.execute();
 
 			conn.commit();
-			ConnectionManager.returnConnection(conn);
 		}
+		ConnectionManager.returnConnection(conn);
 	}
 
-	//It reads the postings table and creates the doc_word_freq_df_list file.
+	//It reads the postmt_select_docinfo_from_docmagstings table and creates the doc_word_freq_df_list file.
 	//The code is complete.
 	public static void fillDocWordFreqDfList(String DocWordFreqDfListFilename) throws Exception {
 		//Creating the DocWordFreqDfList output file
@@ -121,7 +112,7 @@ public class Index {
 		ResultSet rset = stmt_select_all_from_postings.executeQuery();
 		while (rset.next()) {
 			String word = rset.getString(1);
-			// System.out.println(word);
+			System.out.println(word);
 			Integer df = rset.getInt(2);
 			byte[] bytestream = rset.getBytes(3);
 			Map<Integer, Integer> docid_freq_map = Delta.deltalist2sortedmap(VB.VBDECODE(bytestream));
@@ -138,18 +129,17 @@ public class Index {
 	public static void fillDocMagTable(String sortedDocWordDfListFilename, int N /*total number of docs*/)
 			throws Exception {
 
+	    //Done by Zhuoli
 		/*
-		TO-DO ...
-
-				stmt_insert_into_docmag.setInt(1, docid);
-				stmt_insert_into_docmag.setDouble(2, Index.magnitude(word_freq_map, word_df_map, N));
-				stmt_insert_into_docmag.setInt(3, Index.maxf(word_freq_map) );
-				stmt_insert_into_docmag.execute();
-			}
-
-		TO-DO ...
+		BufferedWriter out = new BufferedWriter(new FileWriter(sortedDocWordDfListFilename));
 
 
+		//set up communication msg
+		stmt_insert_into_docmag.setInt(1, docid);
+		stmt_insert_into_docmag.setDouble(2, Index.magnitude(word_freq_map, word_df_map, N));
+		stmt_insert_into_docmag.setInt(3, Index.maxf(word_freq_map) );
+		stmt_insert_into_docmag.execute();
+		//commit and send the msg
 		conn.commit();
 		ConnectionManager.returnConnection(conn);
 		*/
@@ -174,7 +164,21 @@ public class Index {
 			throws Exception {
 
 		double magsquare = 0;
-		// TO-DO ...
+		// Done by Zhuoli
+		// find max of words
+		int maxfreq=maxf(word_freq_map);
+		double [] wij= new double[word_freq_map.size()];
+		// compute vector q
+		int iterator=0;
+		for (String word : word_freq_map.keySet()) {
+			//compute wif from f and df
+			wij[iterator]=tfidf(word_freq_map.get(word),maxfreq,word_df_map.get(word),N);
+			iterator++;
+		}
+		//computer magsqure buy adding square of each wij
+		for(int i=0;i<wij.length;i++){
+			magsquare+=wij[i]*wij[i];
+		}
 		return Math.sqrt(magsquare);
 	}
 
@@ -201,7 +205,13 @@ public class Index {
 
 		stmt_select_docinfo_from_docmag.setInt(1, docid);
 		//TO-DO ...
-
+		//Done by Zhuoli
+		//in stmt_select_docinfo_from_docmag, 1=vectormagnitude, 2=maxf
+		ResultSet rset = stmt_select_docinfo_from_docmag.executeQuery();
+		if (rset.next()){
+			docinfo.maxf=rset.getInt(2);
+			docinfo.magnitude=rset.getDouble(1);
+		}
 		return docinfo;
 	}
 

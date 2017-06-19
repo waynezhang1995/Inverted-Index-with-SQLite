@@ -4,3 +4,5 @@ bin/
 .DS_Store
 .DS_Store?
 .project
+word_doc_list.txt
+sorted_word_doc_list.txt

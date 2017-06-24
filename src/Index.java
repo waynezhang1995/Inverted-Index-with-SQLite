@@ -130,19 +130,50 @@ public class Index {
 			throws Exception {
 
 	    //Done by Zhuoli
-		/*
-		BufferedWriter out = new BufferedWriter(new FileWriter(sortedDocWordDfListFilename));
 
+		//input file
+		BufferedReader in= new BufferedReader(new FileReader(sortedDocWordDfListFilename));
 
-		//set up communication msg
-		stmt_insert_into_docmag.setInt(1, docid);
-		stmt_insert_into_docmag.setDouble(2, Index.magnitude(word_freq_map, word_df_map, N));
-		stmt_insert_into_docmag.setInt(3, Index.maxf(word_freq_map) );
-		stmt_insert_into_docmag.execute();
+		String readline;
+		String [] splitline;
+		int docid;
+		int oldid=0;
+		//maps to calculate magnitude.
+		Map<String,Integer> word_freq_map = new HashMap<String,Integer>();
+		Map<String,Integer> word_df_map = new HashMap<String,Integer>();
+
+		//for every docID, calculate the magtitude and input in into noth sql and output file
+		while((readline = in.readLine()) != null){
+			splitline=readline.split(" ");
+			//fill maps and ID
+			word_freq_map.put(splitline[1],Integer.parseInt(splitline[2]));
+			word_df_map.put(splitline[1],Integer.parseInt(splitline[3]));
+			docid= Integer.parseInt(splitline[0]);
+
+			if (oldid==0){
+				oldid=docid;
+			}
+			//when we finish reading one docID, calculate the magitude for that docID.
+			if (docid!=oldid){
+				//calulate magnitude and output into sql
+				stmt_insert_into_docmag.setInt(1, docid);
+				stmt_insert_into_docmag.setDouble(2, Index.magnitude(word_freq_map, word_df_map, N));
+				stmt_insert_into_docmag.setInt(3, Index.maxf(word_freq_map) );
+				stmt_insert_into_docmag.execute();
+				//update oldid
+				oldid=docid;
+				//refresh map and input the read item, it produce errors and might crush if file only contains 1 word.
+				word_freq_map = new HashMap<String,Integer>();
+				word_df_map = new HashMap<String,Integer>();
+				word_freq_map.put(splitline[1],Integer.parseInt(splitline[2]));
+				word_df_map.put(splitline[1],Integer.parseInt(splitline[3]));
+			}
+
+		}
 		//commit and send the msg
+
 		conn.commit();
 		ConnectionManager.returnConnection(conn);
-		*/
 	}
 
 	public static int maxf(Map<String, Integer> word_freq_map) {

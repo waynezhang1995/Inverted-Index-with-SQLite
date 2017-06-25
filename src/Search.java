@@ -150,9 +150,12 @@ public class Search {
     	long startTime = System.currentTimeMillis();
 
     	Search mySearch = new Search("ryoka hydroelectric");
-    	System.out.println( mySearch.compute().size() );
-    	System.out.println( mySearch.sortResult( mySearch.compute() ) );
+		System.out.println("\n\n\n\n");
+		System.out.println("** Testing the search function **");
+		System.out.println("\nSearch Term ===>  ryoka hydroelectric\n");
+    	System.out.println("Size: " + mySearch.compute().size() + "\n");
+    	System.out.println("Result list: " + mySearch.sortResult( mySearch.compute() ) + "\n");
 
-    	System.out.println("Time elapsed (sec) = " + (System.currentTimeMillis() - startTime) / 1000.0);
+    	System.out.println("Time elapsed (sec) = " + (System.currentTimeMillis() - startTime) / 1000.0 + "\n\n\n\n");
     }
 }

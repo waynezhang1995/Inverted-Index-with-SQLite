@@ -1,6 +1,6 @@
 # Inverted-Index-With-SQLite
 
-## Work in progress. Will update later
+## Deprecated
 
 ## About
 Simple search engine emulator using the TF-IDF indexing scheme. This project about implementing an inverted index using a relational database (e.g. SQLite) and Java. The idea is to use the B-Tree data structure offered by a relational database instead of building it from the scratch.
